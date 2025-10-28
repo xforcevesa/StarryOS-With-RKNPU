@@ -71,11 +71,11 @@ starry-vm = { workspace = true, features = ["axio"] }
 syscalls = { git = "https://github.com/jasonwhite/syscalls.git", rev = "92624de", default-features = false }
 ringbuf = { version = "0.4.8", default-features = false, features = ["alloc"] }
 zerocopy = { version = "0.8.26", features = ["derive"] }
-tracepoint.workspace = true
-static-keys.workspace = true
-
+static-keys = "0.8.2"
+tracepoint = { git = "https://github.com/Starry-OS/tracepoint.git" }
+# tracepoint = { path = "../../ax-project/tracepoint" }
 # kbpf-basic = { path = "../../ax-project/kbpf-basic/" }
-kbpf-basic = { git = "https://github.com/Starry-OS/kbpf-basic", rev = "ef8ade5" }
+kbpf-basic = { git = "https://github.com/Starry-OS/kbpf-basic", rev = "9e03b29" }
 rbpf = { git = "https://github.com/qmonnet/rbpf.git", default-features = false, rev = "f31e471" }
 
 [target.'cfg(not(target_arch = "loongarch64"))'.dependencies]
