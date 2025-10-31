@@ -363,7 +363,7 @@ dependencies = [
 [[package]]
 name = "axcpu"
 version = "0.2.2"
-source = "git+https://github.com/Starry-OS/axcpu.git?rev=94aa1bd#94aa1bd66a6140b16a44c8c9d11a848cb5a911a8"
+source = "git+https://github.com/Starry-OS/axcpu.git?rev=398ef5e#398ef5ecb09ec290978e8eefa08887265a43b0ba"
 dependencies = [
  "aarch64-cpu",
  "axbacktrace",
@@ -1724,7 +1724,7 @@ dependencies = [
 [[package]]
 name = "kprobe"
 version = "0.1.0"
-source = "git+https://github.com/Starry-OS/kprobe?rev=318cbb2#318cbb242ec8285903a909433fdf8da54554b324"
+source = "git+https://github.com/Starry-OS/kprobe#830b33435dc4fde657b0bb060fca1e69750d1ce4"
 dependencies = [
  "cfg-if",
  "lock_api",
