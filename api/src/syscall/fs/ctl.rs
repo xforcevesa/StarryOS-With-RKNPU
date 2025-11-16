@@ -99,6 +99,61 @@ pub fn sys_mkdirat(dirfd: i32, path: *const c_char, mode: u32) -> AxResult<isize
     })
 }
 
+
+pub fn sys_mknodat(dirfd: i32, path: *const c_char, mode: u32, dev: u64) -> Result<isize, AxError> {
+    let path = vm_load_string(path)?;
+    debug!(
+        "sys_mknodat <= dirfd: {}, path: {:?}, mode: {:#o}, dev: {:#x}",
+        dirfd, path, mode, dev
+    );
+
+    // Extract file type from mode using S_IFMT
+    let file_type = mode & 0o170000; // S_IFMT
+    let node_type = match file_type {
+        0o020000 => NodeType::CharacterDevice, // S_IFCHR
+        0o060000 => NodeType::BlockDevice,     // S_IFBLK
+        0o040000 => NodeType::Directory,       // S_IFDIR
+        0o100000 => NodeType::RegularFile,     // S_IFREG
+        0o010000 => NodeType::Fifo,            // S_IFIFO
+        0o120000 => NodeType::Symlink,         // S_IFLNK
+        0o140000 => NodeType::Socket,          // S_IFSOCK
+        _ => NodeType::Unknown,
+    };
+
+    let mode = mode & !current().as_thread().proc_data.umask();
+    let mode = NodePermission::from_bits_truncate(mode as u16);
+
+    with_fs(dirfd, |fs| {
+        match node_type {
+            NodeType::CharacterDevice | NodeType::BlockDevice => {
+                // For device nodes, we don't support creating them in this implementation
+                Err(AxError::OperationNotSupported)
+            }
+            NodeType::Directory => {
+                fs.create_dir(path, mode)?;
+                Ok(0)
+            }
+            NodeType::RegularFile => {
+                // Create an empty regular file
+                let (dir, name) = fs.resolve_nonexistent(Path::new(&path))?;
+                dir.create(name, NodeType::RegularFile, mode)?;
+                Ok(0)
+            }
+            NodeType::Fifo | NodeType::Socket => {
+                // These are not supported in this implementation
+                Err(AxError::OperationNotSupported)
+            }
+            NodeType::Symlink => {
+                // Symlinks require a target, but we don't have one in mknodat
+                Err(AxError::InvalidInput)
+            }
+            NodeType::Unknown => {
+                Err(AxError::InvalidInput)
+            }
+        }
+    })
+}
+
 // Directory buffer for getdents64 syscall
 struct DirBuffer {
     buf: Vec<u8>,

@@ -39,6 +39,7 @@ pub fn new_user_task(
                 }
             });
 
+            info!("new task: {:?}", curr.id_name());
             info!("Enter user space: ip={:#x}, sp={:#x}", uctx.ip(), uctx.sp());
 
             let thr = curr.as_thread();
@@ -173,6 +174,7 @@ pub fn do_exit(exit_code: i32, group_exit: bool) {
         if let Some(futex) = guard {
             futex.wq.wake(1, u32::MAX);
         }
+        warn!("do_exit: yield_now()");
         axtask::yield_now();
     }
     let head = thr.robust_list_head() as *const RobustListHead;

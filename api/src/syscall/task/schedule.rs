@@ -14,7 +14,9 @@ use starry_vm::{VmMutPtr, VmPtr, vm_load, vm_write_slice};
 use crate::time::TimeValueLike;
 
 pub fn sys_sched_yield() -> AxResult<isize> {
+    warn!("sys_sched_yield");
     axtask::yield_now();
+    warn!("sys_sched_yield =>");
     Ok(0)
 }
 

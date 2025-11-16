@@ -11,6 +11,12 @@ mod memtrack;
 mod rtc;
 pub mod tty;
 
+mod dma_heap;
+pub mod card0;
+pub mod card1;
+// mod rtc;
+pub mod drm;
+
 use alloc::{format, sync::Arc};
 use core::any::Any;
 
@@ -272,6 +278,48 @@ fn builder(fs: Arc<SimpleFs>) -> DirMaker {
     root.add(
         "shm",
         SimpleDir::new_maker(fs.clone(), Arc::new(DirMapping::new())),
+    );
+
+    
+    // DMA heap devices
+    let mut dma_heap_dir = DirMapping::new();
+    dma_heap_dir.add(
+        "system",
+        Device::new(
+            fs.clone(),
+            NodeType::CharacterDevice,
+            dma_heap::DMA_HEAP_SYSTEM_DEVICE_ID,
+            Arc::new(dma_heap::DmaHeapSystem::new()),
+        ),
+    );
+    root.add(
+        "dma_heap",
+        SimpleDir::new_maker(fs.clone(), Arc::new(dma_heap_dir)),
+    );
+
+    // DRI devices
+    let mut dri_dir = DirMapping::new();
+    dri_dir.add(
+        "card0",
+        Device::new(
+            fs.clone(),
+            NodeType::CharacterDevice,
+            card0::CARD0_SYSTEM_DEVICE_ID,
+            Arc::new(card0::Card0::new()),
+        ),
+    );
+    dri_dir.add(
+        "card1",
+        Device::new(
+            fs.clone(),
+            NodeType::CharacterDevice,
+            card1::CARD1_SYSTEM_DEVICE_ID,
+            Arc::new(card1::Card1::new()),
+        ),
+    );
+    root.add(
+        "dri",
+        SimpleDir::new_maker(fs.clone(), Arc::new(dri_dir)),
     );
 
     // Loop devices

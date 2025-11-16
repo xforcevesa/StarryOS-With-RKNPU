@@ -197,15 +197,14 @@ pub fn sys_mmap(
                             .downcast::<Device>()
                             .map_err(|_| AxError::NoSuchDevice)?;
 
-                        match device.mmap() {
+                       match device.mmap(offset as u64) {
                             DeviceMmap::None => {
                                 return Err(AxError::NoSuchDevice);
                             }
                             DeviceMmap::ReadOnly => {
                                 Backend::new_cow(start, page_size, backend, offset as u64, None)
                             }
-                            DeviceMmap::Physical(mut range) => {
-                                range.start += offset;
+                            DeviceMmap::Physical(range) => {
                                 if range.is_empty() {
                                     return Err(AxError::InvalidInput);
                                 }

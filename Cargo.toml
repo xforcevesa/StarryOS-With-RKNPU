@@ -1,7 +1,7 @@
 [workspace]
 resolver = "2"
-members = ["api", "core"]
-exclude = ["arceos"]
+members = ["api", "core", "crates/axdriver-dyn"]
+exclude = ["arceos", "crates/axdriver_crates"]
 
 [workspace.package]
 version = "0.1.0"
@@ -20,7 +20,7 @@ repository = "https://github.com/arceos-org/starry-next"
 
 [workspace.dependencies]
 axfeat = { path = "arceos/api/axfeat", features = [
-    "alloc-slab",
+    "alloc-tlsf",
     "fp-simd",
     "ext4",
     "fs",
@@ -31,6 +31,7 @@ axfeat = { path = "arceos/api/axfeat", features = [
     "rtc",
     # "sched-fifo",
     "sched-rr",
+    "alloc-level-1",
 ] }
 
 axalloc = { path = "arceos/modules/axalloc" }
@@ -46,6 +47,8 @@ axnet = { path = "arceos/modules/axnet" }
 axruntime = { path = "arceos/modules/axruntime" }
 axsync = { path = "arceos/modules/axsync" }
 axtask = { path = "arceos/modules/axtask", features = ["task-ext"] }
+
+axdriver-dyn = { path = "crates/axdriver-dyn" }
 
 axbacktrace = "0.1"
 axerrno = "0.1"
@@ -79,6 +82,10 @@ starry-vm = "0.2"
 starry-core = { path = "./core" }
 starry-api = { path = "./api" }
 
+rdrive = "0.18"
+
+rknpu = { git = "https://github.com/drivercraft/rknpu" }
+
 [package]
 name = "starry"
 version.workspace = true
@@ -93,7 +100,7 @@ default = []
 qemu = [
     "axfeat/driver-virtio-blk",
     "axfeat/driver-virtio-net",
-    "axfeat/driver-virtio-socket",
+    # "axfeat/driver-virtio-socket",
 
     "axfeat/driver-virtio-gpu",
     "axfeat/display",
@@ -103,8 +110,8 @@ qemu = [
     # "axdriver/dyn",
     "starry-api/input",
 
-    "axfeat/vsock",
-    "starry-api/vsock",
+    # "axfeat/vsock",
+    # "starry-api/vsock",
 
     "axfeat/defplat",
 
@@ -114,6 +121,8 @@ qemu = [
 ]
 
 vf2 = ["dep:axplat-riscv64-visionfive2", "axfeat/driver-sdmmc-gpt"]
+
+dyn = ["axfeat/driver-dyn", "dep:axdriver-dyn"]
 
 # Stubs
 pci = ["axfeat/bus-pci"]
@@ -138,11 +147,17 @@ starry-signal.workspace = true
 starry-core.workspace = true
 starry-api.workspace = true
 
+axdriver-dyn = { workspace = true, optional = true }
+rdrive = "0.18"
+
 [dependencies.axplat-riscv64-visionfive2]
 git = "https://github.com/Starry-OS/axplat-riscv64-visionfive2.git"
 rev = "5056c1d"
 features = ["fp-simd", "irq", "rtc"]
 optional = true
+
+[target.'cfg(target_arch = "aarch64")'.dependencies]
+axplat-aarch64-dyn = {path = "crates/axplat-aarch64-dyn", features = ["irq"]}
 
 [patch.crates-io]
 axcpu = { git = "https://github.com/Starry-OS/axcpu.git", rev = "fdbf401" }

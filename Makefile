@@ -3,6 +3,7 @@ export ARCH := riscv64
 export LOG := warn
 export BACKTRACE := y
 export MEMTRACK := n
+export SMP=1
 
 # QEMU Options
 export BLK := y
@@ -45,7 +46,13 @@ rv:
 la:
 	$(MAKE) ARCH=loongarch64 run
 
+aarch64:
+	$(MAKE) ARCH=aarch64 APP_FEATURES=dyn  FEATURES=driver-virtio-blk BUS=mmio LD_SCRIPT=link.x MYPLAT=axplat-aarch64-dyn run
+
+aarch64-build:
+	$(MAKE) ARCH=aarch64 APP_FEATURES=dyn FEATURES=driver-virtio-blk BUS=mmio LD_SCRIPT=link.x MYPLAT=axplat-aarch64-dyn  build
+
 vf2:
 	$(MAKE) ARCH=riscv64 APP_FEATURES=vf2 MYPLAT=axplat-riscv64-visionfive2 BUS=dummy build
 
-.PHONY: build run justrun debug disasm clean
+.PHONY: build run justrun debug disasm clean img

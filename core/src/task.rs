@@ -67,6 +67,10 @@ pub struct ThreadInner {
 
     /// The head of the robust list
     robust_list_head: AtomicUsize,
+    
+    /// The registered rseq area pointer (user address) for restartable
+    /// sequences.
+    rseq_area: AtomicUsize,
 
     /// The thread-level signal manager
     pub signal: Arc<ThreadSignalManager>,
@@ -92,6 +96,7 @@ impl ThreadInner {
             proc_data,
             clear_child_tid: AtomicUsize::new(0),
             robust_list_head: AtomicUsize::new(0),
+            rseq_area: AtomicUsize::new(0),
             time: AssumeSync(RefCell::new(TimeManager::new())),
             oom_score_adj: AtomicI32::new(200),
             exit: AtomicBool::new(false),
@@ -118,6 +123,16 @@ impl ThreadInner {
     pub fn set_robust_list_head(&self, robust_list_head: usize) {
         self.robust_list_head
             .store(robust_list_head, Ordering::SeqCst);
+    }
+    
+    /// Get the registered rseq area pointer.
+    pub fn rseq_area(&self) -> usize {
+        self.rseq_area.load(Ordering::SeqCst)
+    }
+
+    /// Set the registered rseq area pointer.
+    pub fn set_rseq_area(&self, addr: usize) {
+        self.rseq_area.store(addr, Ordering::SeqCst);
     }
 
     /// Get the oom score adjustment value.

@@ -22,6 +22,17 @@ pub fn run_initproc(args: &[String], envs: &[String]) -> i32 {
         })
         .expect("Failed to create user address space");
 
+    // Change working directory to /rknn_yolov8_demo before resolving the executable
+    let rknn_dir = {
+        let mut cx = FS_CONTEXT.lock();
+        if let Ok(dir) = cx.resolve("/rknn_yolov8_demo") {
+            let _ = cx.set_current_dir(dir.clone());
+            Some(dir)
+        } else {
+            None
+        }
+    };
+
     let loc = FS_CONTEXT
         .lock()
         .resolve(&args[0])
@@ -35,6 +46,8 @@ pub fn run_initproc(args: &[String], envs: &[String]) -> i32 {
         .unwrap_or_else(|e| panic!("Failed to load user app: {}", e));
 
     let uctx = UserContext::new(entry_vaddr.into(), ustack_top, 0);
+
+    info!("Init process: {}", name);
 
     let mut task = new_user_task(name, uctx, None);
     task.ctx_mut().set_page_table_root(uspace.page_table_root());
@@ -53,6 +66,13 @@ pub fn run_initproc(args: &[String], envs: &[String]) -> i32 {
         Arc::default(),
         None,
     );
+        
+    // Set the working directory for the process
+    if let Some(dir) = rknn_dir {
+        let mut scope = proc_data.scope.write();
+        FS_CONTEXT.scope_mut(&mut scope).lock().set_current_dir(dir).unwrap();
+    }
+    
     {
         let mut scope = proc_data.scope.write();
         starry_api::file::add_stdio(&mut FD_TABLE.scope_mut(&mut scope).write())
