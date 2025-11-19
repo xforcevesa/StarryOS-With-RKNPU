@@ -57,8 +57,9 @@ checksum = "250f629c0161ad8107cf89319e990051fae62832fd343083bea452d93e2205fd"
 [[package]]
 name = "allocator"
 version = "0.1.1"
-source = "git+https://github.com/Starry-OS/allocator.git?rev=d5feebd#d5feebd4837eecbef13536d5f409f31bb87f550b"
+source = "git+https://github.com/Starry-OS/allocator.git?rev=918365e#918365ebdd9c0a542df4b5a86ab36a2244440617"
 dependencies = [
+ "axerrno",
  "bitmap-allocator",
  "cfg-if",
  "rlsf",
@@ -336,6 +337,7 @@ dependencies = [
  "axdriver_net",
  "axdriver_pci",
  "axdriver_virtio",
+ "axdriver_vsock",
  "axerrno",
  "axhal",
  "axklib 0.2.0",
@@ -374,12 +376,12 @@ dependencies = [
 [[package]]
 name = "axdriver_base"
 version = "0.1.2"
-source = "git+https://github.com/Starry-OS/axdriver_crates.git?rev=a887828#a887828dbf5c7b5ffb7688dd0afc64259e1b4f4a"
+source = "git+https://github.com/Starry-OS/axdriver_crates.git?rev=a263470#a2634709194f2fd595a52b660d7d43df7c32570e"
 
 [[package]]
 name = "axdriver_block"
 version = "0.1.2"
-source = "git+https://github.com/Starry-OS/axdriver_crates.git?rev=a887828#a887828dbf5c7b5ffb7688dd0afc64259e1b4f4a"
+source = "git+https://github.com/Starry-OS/axdriver_crates.git?rev=a263470#a2634709194f2fd595a52b660d7d43df7c32570e"
 dependencies = [
  "axdriver_base",
  "gpt_disk_io",
@@ -390,7 +392,7 @@ dependencies = [
 [[package]]
 name = "axdriver_display"
 version = "0.1.2"
-source = "git+https://github.com/Starry-OS/axdriver_crates.git?rev=a887828#a887828dbf5c7b5ffb7688dd0afc64259e1b4f4a"
+source = "git+https://github.com/Starry-OS/axdriver_crates.git?rev=a263470#a2634709194f2fd595a52b660d7d43df7c32570e"
 dependencies = [
  "axdriver_base",
 ]
@@ -398,7 +400,7 @@ dependencies = [
 [[package]]
 name = "axdriver_input"
 version = "0.1.2"
-source = "git+https://github.com/Starry-OS/axdriver_crates.git?rev=a887828#a887828dbf5c7b5ffb7688dd0afc64259e1b4f4a"
+source = "git+https://github.com/Starry-OS/axdriver_crates.git?rev=a263470#a2634709194f2fd595a52b660d7d43df7c32570e"
 dependencies = [
  "axdriver_base",
  "strum",
@@ -407,7 +409,7 @@ dependencies = [
 [[package]]
 name = "axdriver_net"
 version = "0.1.2"
-source = "git+https://github.com/Starry-OS/axdriver_crates.git?rev=a887828#a887828dbf5c7b5ffb7688dd0afc64259e1b4f4a"
+source = "git+https://github.com/Starry-OS/axdriver_crates.git?rev=a263470#a2634709194f2fd595a52b660d7d43df7c32570e"
 dependencies = [
  "axdriver_base",
  "log",
@@ -417,7 +419,7 @@ dependencies = [
 [[package]]
 name = "axdriver_pci"
 version = "0.1.2"
-source = "git+https://github.com/Starry-OS/axdriver_crates.git?rev=a887828#a887828dbf5c7b5ffb7688dd0afc64259e1b4f4a"
+source = "git+https://github.com/Starry-OS/axdriver_crates.git?rev=a263470#a2634709194f2fd595a52b660d7d43df7c32570e"
 dependencies = [
  "virtio-drivers",
 ]
@@ -425,15 +427,25 @@ dependencies = [
 [[package]]
 name = "axdriver_virtio"
 version = "0.1.2"
-source = "git+https://github.com/Starry-OS/axdriver_crates.git?rev=a887828#a887828dbf5c7b5ffb7688dd0afc64259e1b4f4a"
+source = "git+https://github.com/Starry-OS/axdriver_crates.git?rev=a263470#a2634709194f2fd595a52b660d7d43df7c32570e"
 dependencies = [
  "axdriver_base",
  "axdriver_block",
  "axdriver_display",
  "axdriver_input",
  "axdriver_net",
+ "axdriver_vsock",
  "log",
  "virtio-drivers",
+]
+
+[[package]]
+name = "axdriver_vsock"
+version = "0.1.2"
+source = "git+https://github.com/Starry-OS/axdriver_crates.git?rev=a263470#a2634709194f2fd595a52b660d7d43df7c32570e"
+dependencies = [
+ "axdriver_base",
+ "log",
 ]
 
 [[package]]
@@ -466,7 +478,6 @@ dependencies = [
 name = "axfs-ng"
 version = "0.1.0"
 dependencies = [
- "allocator",
  "axalloc",
  "axdriver",
  "axerrno",
@@ -514,7 +525,7 @@ dependencies = [
  "axconfig",
  "axcpu",
  "axlog",
- "axplat",
+ "axplat 0.2.0 (git+https://github.com/Starry-OS/axplat_crates)",
  "axplat-aarch64-qemu-virt",
  "axplat-loongarch64-qemu-virt",
  "axplat-riscv64-qemu-virt",
@@ -593,7 +604,6 @@ dependencies = [
 name = "axmm"
 version = "0.2.0"
 dependencies = [
- "allocator",
  "axalloc",
  "axconfig",
  "axerrno",
@@ -654,6 +664,20 @@ dependencies = [
 ]
 
 [[package]]
+name = "axplat"
+version = "0.2.0"
+source = "git+https://github.com/Starry-OS/axplat_crates#5e97073fadcd85a68fb90c5b5057a60eb8815399"
+dependencies = [
+ "axplat-macros",
+ "bitflags 2.10.0",
+ "const-str",
+ "crate_interface",
+ "kspin",
+ "memory_addr",
+ "percpu",
+]
+
+[[package]]
 name = "axplat-aarch64-dyn"
 version = "0.2.0"
 dependencies = [
@@ -662,7 +686,7 @@ dependencies = [
  "arm-gic-driver 0.15.8 (registry+https://github.com/rust-lang/crates.io-index)",
  "axconfig-macros",
  "axcpu",
- "axplat",
+ "axplat 0.2.0 (git+https://github.com/Starry-OS/axplat_crates)",
  "fdt-parser",
  "heapless 0.8.0",
  "lazyinit",
@@ -690,7 +714,7 @@ dependencies = [
  "arm_pl011",
  "arm_pl031",
  "axcpu",
- "axplat",
+ "axplat 0.2.0 (git+https://github.com/Starry-OS/axplat_crates.git?rev=243fdc9)",
  "int_ratio",
  "kspin",
  "lazyinit",
@@ -706,7 +730,7 @@ source = "git+https://github.com/Starry-OS/axplat_crates.git?rev=243fdc9#243fdc9
 dependencies = [
  "axconfig-macros",
  "axcpu",
- "axplat",
+ "axplat 0.2.0 (git+https://github.com/Starry-OS/axplat_crates.git?rev=243fdc9)",
  "axplat-aarch64-peripherals",
  "log",
  "page_table_entry",
@@ -719,7 +743,7 @@ source = "git+https://github.com/Starry-OS/axplat_crates.git?rev=243fdc9#243fdc9
 dependencies = [
  "axconfig-macros",
  "axcpu",
- "axplat",
+ "axplat 0.2.0 (git+https://github.com/Starry-OS/axplat_crates.git?rev=243fdc9)",
  "chrono",
  "kspin",
  "lazyinit",
@@ -747,7 +771,7 @@ source = "git+https://github.com/Starry-OS/axplat_crates.git?rev=243fdc9#243fdc9
 dependencies = [
  "axconfig-macros",
  "axcpu",
- "axplat",
+ "axplat 0.2.0 (git+https://github.com/Starry-OS/axplat_crates.git?rev=243fdc9)",
  "kspin",
  "lazyinit",
  "log",
@@ -765,7 +789,7 @@ source = "git+https://github.com/Starry-OS/axplat-riscv64-visionfive2.git?rev=50
 dependencies = [
  "axconfig-macros",
  "axcpu",
- "axplat",
+ "axplat 0.2.0 (git+https://github.com/Starry-OS/axplat_crates.git?rev=243fdc9)",
  "kspin",
  "lazyinit",
  "log",
@@ -783,7 +807,7 @@ source = "git+https://github.com/Starry-OS/axplat_crates.git?rev=243fdc9#243fdc9
 dependencies = [
  "axconfig-macros",
  "axcpu",
- "axplat",
+ "axplat 0.2.0 (git+https://github.com/Starry-OS/axplat_crates.git?rev=243fdc9)",
  "bitflags 2.10.0",
  "heapless 0.9.1",
  "int_ratio",
@@ -820,7 +844,6 @@ dependencies = [
  "axconfig",
  "axdisplay",
  "axdriver",
- "axerrno",
  "axfs-ng",
  "axfs-ng-vfs",
  "axhal",
@@ -829,7 +852,7 @@ dependencies = [
  "axlog",
  "axmm",
  "axnet",
- "axplat",
+ "axplat 0.2.0 (git+https://github.com/Starry-OS/axplat_crates)",
  "axtask",
  "chrono",
  "crate_interface",
@@ -2516,9 +2539,9 @@ checksum = "3d4054cba279515fa87761b101d857333ce06391dbe8f18a11347204a7111416"
 [[package]]
 name = "memory_set"
 version = "0.4.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e7d47cbc25a4d00427f9070fd768eaf907f19c903fb72b547b19db2d56b9408e"
+source = "git+https://github.com/Starry-OS/axmm_crates.git?rev=5554d9b#5554d9b1a21aa5ee67317eb15a7146336f318b01"
 dependencies = [
+ "axerrno",
  "memory_addr",
 ]
 
@@ -4020,7 +4043,7 @@ dependencies = [
 [[package]]
 name = "starry-signal"
 version = "0.2.2"
-source = "git+https://github.com/Starry-OS/starry-signal.git?rev=5b23dec#5b23dec9b652fade066df91d9d9c84e9b5f89709"
+source = "git+https://github.com/Starry-OS/starry-signal.git?rev=acdb5e9#acdb5e9a76bc5e2244c04c4d5d842d9f3c0416a5"
 dependencies = [
  "axcpu",
  "bitflags 2.10.0",

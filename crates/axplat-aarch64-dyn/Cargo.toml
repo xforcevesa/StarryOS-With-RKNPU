@@ -17,7 +17,7 @@ aarch64-cpu-ext = "0.1"
 arm-gic-driver = {version = "0.15.3", features = ["rdif"]}
 axconfig-macros = "0.2"
 axcpu = "0.2"
-axplat = "0.2"
+axplat = { git = "https://github.com/Starry-OS/axplat_crates" }
 fdt-parser = "0.4"
 heapless = "0.8"
 lazyinit = "0.2"
@@ -28,7 +28,7 @@ paste = "1.0"
 percpu = {version = "0.2"}
 rdrive = "0.18"
 rdif-intc = "0.12"
-somehal = {version = "0.4"}
+somehal = {version = "0.4.1"}
 spin = "0.10"
 some-serial = "0.2"
 # some-serial = {path = "/home/zhourui/opensource/some-serial"}

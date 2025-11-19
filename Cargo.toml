@@ -100,7 +100,7 @@ default = []
 qemu = [
     "axfeat/driver-virtio-blk",
     "axfeat/driver-virtio-net",
-    # "axfeat/driver-virtio-socket",
+    "axfeat/driver-virtio-socket",
 
     "axfeat/driver-virtio-gpu",
     "axfeat/display",
@@ -110,8 +110,8 @@ qemu = [
     # "axdriver/dyn",
     "starry-api/input",
 
-    # "axfeat/vsock",
-    # "starry-api/vsock",
+    "axfeat/vsock",
+    "starry-api/vsock",
 
     "axfeat/defplat",
 
